@@ -1,13 +1,18 @@
 <ion-view view-title="Usage">
-  <ion-content>
+  <ion-content class="padding">
     <ion-list>
+    <p>User could view their usage of HSA like the amount of money spend on health and the reimbursement in a specific time period</p>
       <ion-item class="item-remove-animate item-avatar item-icon-right" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
-        <p>Last Month</p>
+        Last Week
         <i class="icon ion-chevron-right icon-accessory"></i>
-
-        <ion-option-button class="button-assertive" ng-click="remove(chat)">
-          Delete
-        </ion-option-button>
+      </ion-item>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+        Last Month
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+        Last Year
+        <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
   </ion-content>

@@ -110,6 +110,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/login');
+  $urlRouterProvider.otherwise('/tab/account');
 
 });
