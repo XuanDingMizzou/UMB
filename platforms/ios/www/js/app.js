@@ -5,9 +5,10 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 'starter.services','ngCordova','backand'])
 
 .run(function($ionicPlatform) {
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,9 +22,36 @@ angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 
       StatusBar.styleDefault();
     }
   });
+
+//   $cordovaTouchID.checkSupport().then(function() {
+//     //2
+//     $cordovaTouchID.authenticate("Please authenticate with your fingerprint!").then(function() {
+//         // 3
+//         alert("You are a trusty mate! Come in and find out...")
+//     }, function (error) { // 4
+//         // Hopefully, there will be a better callback code in future releases
+//         if (error == "Fallback authentication mechanism selected.") {
+//             // User selected to enter a password 
+//         } else {
+//             alert("Sorry, we are not able to grant access.");
+//         }
+//     });
+// }, function (error) { // 5
+//     alert(error); // TouchID not supported
+// });
+
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($compileProvider){
+  $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
+})
+
+
+.config(function($stateProvider, $urlRouterProvider,BackandProvider) {
+
+  BackandProvider.setAppName('todo208240');
+  BackandProvider.setSignUpToken('14e14c05-daee-4e2c-934d-471380117e89');
+  BackandProvider.setAnonymousToken('c23325f4-7213-48e9-961b-ee4dda31a7a9');
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -31,20 +59,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 
   // Each state's controller can be found in controllers.js
   $stateProvider
 
-  .state('mainlogin', {
-      url: '/',
-      templateUrl:"templates/login.html"
-      // controller: function($scope,$state){
-      //   $scope.login = function(){
-      //     $state.go('tab.dash');
-      //   }
-      // }
-      // views:{
-      //   'login-logic':{
-      //     templateUrl: 'templates/login.html',
-      //     controller: 'LoginCtrl'
-      //   }
-      // }
+  .state('login', {
+      url: '/login',
+      templateUrl:"templates/login.html",
+      controller: 'LoginCtrl'
+  })
+
+  .state('signup',{
+    url: '/signup',
+    templateUrl:"templates/signup.html",
+    controller: 'SignupCtrl'
   })
 
   // setup an abstract state for the tabs directive
@@ -75,7 +99,8 @@ angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 
         }
       }
     })
-    .state('tab.chat-detail', {
+
+  .state('tab.chat-detail', {
       url: '/chats/:chatId',
       views: {
         'tab-chats': {
@@ -93,9 +118,35 @@ angular.module('starter', ['ionic','ionic.service.core', 'starter.controllers', 
         controller: 'AccountCtrl'
       }
     }
+  })
+
+  .state('tab.newClaim',{
+    url:'/newClaim',
+    views:{
+      'tab-account':{
+        templateUrl:'templates/newClaim.html',
+        controller: 'TestCtrl'
+      }
+    }
+  })
+
+  .state('tab.claimDetails',{
+    url: '/claimDetails',
+    views:{
+      'tab-account':{
+        templateUrl: 'templates/claimDetails.html',
+        controller: 'TestCtrl'
+    }
+  }
+  })
+
+  .state('test',{
+    url: '/test',
+    templateUrl: 'templates/tab-test.html',
+    controller: 'TestCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/tab/dash');
 
 });

@@ -1,34 +1,70 @@
 angular.module('starter.controllers', [])
 
-.controller('LoginCtrl',function(){
+.controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state){
+  $scope.data = {};
+  $scope.login = function(){
+    LoginService.loginUser($scope.data.username, $scope.data.password).success(function(data){
+      $state.go('tab.dash');
+    }).error(function(data){
+      var alertPopup = $ionicPopup.alert({
+        title: 'Login failed!',
+        template: 'Please check your credentials!'
+      });
+    });
+  }
 
+  $scope.signup = function(){
+    $state.go('signup');
+  }
+})
+
+.controller('SignupCtrl',function($scope,$state,SignupService){
+  $scope.input = {};
+  $scope.signup = function(){
+    SignupService.addUser($scope.input);
+    $state.go('login');
+  }
 })
 
 .controller('DashCtrl', function($scope) {
-  //  var deploy = new Ionic.Deploy();
-  
-  // // Update app code with new release from Ionic Deploy
-  // $scope.doUpdate = function() {
-  //   deploy.update().then(function(res) {
-  //     console.log('Ionic Deploy: Update Success! ', res);
-  //   }, function(err) {
-  //     console.log('Ionic Deploy: Update error! ', err);
-  //   }, function(prog) {
-  //     console.log('Ionic Deploy: Progress... ', prog);
-  //   });
-  // };
-
-  // // Check Ionic Deploy for new code
-  // $scope.checkForUpdates = function() {
-  //   console.log('Ionic Deploy: Checking for updates');
-  //   deploy.check().then(function(hasUpdate) {
-  //     console.log('Ionic Deploy: Update available: ' + hasUpdate);
-  //     $scope.hasUpdate = hasUpdate;
-  //   }, function(err) {
-  //     console.error('Ionic Deploy: Unable to check for updates', err);
-  //   });
-  // }
 })
+
+
+.controller('TestCtrl', function($scope, TodoService) {
+  $scope.todos = [];
+  $scope.input = {};
+ 
+  function getAllTodos() {
+    TodoService.getTodos()
+    .then(function (result) {
+      // console.dir(result);
+      $scope.todos = result.data.data;
+    });
+  }
+
+  $scope.addTodo = function() {
+    // $scope.newClaim = '{"name":$scope.input, "time":Date(), "completed":false}';
+    $scope.currDate = new Date();
+    $scope.newClaim = {"name":$scope.input.name,"completed":false,"time":$scope.currDate.toJSON()};
+    TodoService.addTodo($scope.newClaim)
+    .then(function(result) {
+      $scope.input = {};
+      // Reload our todos, not super cool
+      getAllTodos();
+    });
+  }
+ 
+  $scope.deleteTodo = function(id) {
+    TodoService.deleteTodo(id)
+    .then(function (result) {
+      // Reload our todos, not super cool
+      getAllTodos();
+    });
+  }
+ 
+  getAllTodos();
+})
+
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
@@ -49,8 +85,13 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
+.controller('AccountCtrl', function($scope,$state,TodoService) {
+  $scope.viewClaim = function(){
+    $state.go('tab.claimDetails');
   };
+
+  $scope.newClaim = function(){
+    $state.go('tab.newClaim');
+  };
+
 });

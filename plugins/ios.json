@@ -75,6 +75,9 @@
         },
         "cordova-plugin-touchid": {
             "PACKAGE_NAME": "com.ionicframework.umbhsa129410"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.umbhsa129410"
         }
     },
     "dependent_plugins": {}

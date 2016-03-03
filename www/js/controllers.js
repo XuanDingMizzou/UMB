@@ -1,17 +1,39 @@
 angular.module('starter.controllers', [])
 
 .controller('LoginCtrl', function($scope, LoginService, $ionicPopup, $state){
+
+  function getObjects(obj, key, val) {
+            var objects = [];
+            for (var i in obj) {
+                if (!obj.hasOwnProperty(i)) continue;
+                if (typeof obj[i] == 'object') {
+                    objects = objects.concat(getObjects(obj[i], key, val));
+                } else if (i == key && obj[key] == val) {
+                    objects.push(obj);
+                }
+            }
+            return objects;
+            }
+
+
   $scope.data = {};
 
   $scope.login = function(){
-    LoginService.loginUser($scope.data.username, $scope.data.password).success(function(data){
-      $state.go('tab.dash');
-    }).error(function(data){
-      var alertPopup = $ionicPopup.alert({
-        title: 'Login failed!',
-        template: 'Please check your credentials!'
+    LoginService.getUsers().then(function(result){
+
+      var a = getObjects(result,'username',$scope.data.username);
+
+      if(a[0].password == $scope.data.password)
+      {
+        $state.go('tab.dash');
+      }
+      else{
+        var alertPopup = $ionicPopup.alert({
+        title: 'Login Fail!',
+        template: 'Username/Password wrong!'
       });
-    });
+      }
+    })
   }
 
   $scope.signup = function(){
@@ -19,31 +41,103 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('DashCtrl', function($scope) {
-  //  var deploy = new Ionic.Deploy();
-  
-  // // Update app code with new release from Ionic Deploy
-  // $scope.doUpdate = function() {
-  //   deploy.update().then(function(res) {
-  //     console.log('Ionic Deploy: Update Success! ', res);
-  //   }, function(err) {
-  //     console.log('Ionic Deploy: Update error! ', err);
-  //   }, function(prog) {
-  //     console.log('Ionic Deploy: Progress... ', prog);
-  //   });
-  // };
+.controller('SignupCtrl',function($scope,$state,SignupService,$ionicPopup){
 
-  // // Check Ionic Deploy for new code
-  // $scope.checkForUpdates = function() {
-  //   console.log('Ionic Deploy: Checking for updates');
-  //   deploy.check().then(function(hasUpdate) {
-  //     console.log('Ionic Deploy: Update available: ' + hasUpdate);
-  //     $scope.hasUpdate = hasUpdate;
-  //   }, function(err) {
-  //     console.error('Ionic Deploy: Unable to check for updates', err);
-  //   });
-  // }
+  function getObjects(obj, key, val) {
+            var objects = [];
+            for (var i in obj) {
+                if (!obj.hasOwnProperty(i)) continue;
+                if (typeof obj[i] == 'object') {
+                    objects = objects.concat(getObjects(obj[i], key, val));
+                } else if (i == key && obj[key] == val) {
+                    objects.push(obj);
+                }
+            }
+            return objects;
+            }
+
+  $scope.input = {};
+  $scope.signup = function(){
+    if(!$scope.input.username)
+    {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Signup Fail!',
+        template: 'No username!'
+      });
+    }
+    else if(!$scope.input.password){
+      var alertPopup = $ionicPopup.alert({
+        title: 'Signup Fail!',
+        template: 'No password!'
+      });
+    }
+    else{
+  SignupService.getUsers().then(function(result){
+
+    var a = getObjects(result,'username',$scope.input.username);
+    
+    console.dir(a);
+
+    if (a.length == 0){
+      SignupService.addUser($scope.input);
+      var alertPopup = $ionicPopup.alert({
+        title: 'Welcome!',
+        template: 'Successful signup!'
+      });
+      $state.go('login');
+    }
+    else{
+      var alertPopup = $ionicPopup.alert({
+        title: 'Signup Fail!',
+        template: 'Username already exists'
+      });
+    }
+  })
+    // SignupService.addUser($scope.input);
+
+  }
+}
 })
+
+.controller('DashCtrl', function($scope) {
+})
+
+
+.controller('TestCtrl', function($scope, TodoService) {
+  $scope.todos = [];
+  $scope.input = {};
+ 
+  function getAllTodos() {
+    TodoService.getTodos()
+    .then(function (result) {
+      // console.dir(result);
+      $scope.todos = result.data.data;
+    });
+  }
+
+  $scope.addTodo = function() {
+    // $scope.newClaim = '{"name":$scope.input, "time":Date(), "completed":false}';
+    $scope.currDate = new Date();
+    $scope.newClaim = {"name":$scope.input.name,"completed":false,"time":$scope.currDate.toJSON()};
+    TodoService.addTodo($scope.newClaim)
+    .then(function(result) {
+      $scope.input = {};
+      // Reload our todos, not super cool
+      getAllTodos();
+    });
+  }
+ 
+  $scope.deleteTodo = function(id) {
+    TodoService.deleteTodo(id)
+    .then(function (result) {
+      // Reload our todos, not super cool
+      getAllTodos();
+    });
+  }
+ 
+  getAllTodos();
+})
+
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
@@ -64,8 +158,13 @@ angular.module('starter.controllers', [])
   $scope.chat = Chats.get($stateParams.chatId);
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
+.controller('AccountCtrl', function($scope,$state,TodoService) {
+  $scope.viewClaim = function(){
+    $state.go('tab.claimDetails');
   };
+
+  $scope.newClaim = function(){
+    $state.go('tab.newClaim');
+  };
+
 });
