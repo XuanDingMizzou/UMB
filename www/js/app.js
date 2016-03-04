@@ -1,4 +1,4 @@
-angular.module('umb-hsa', ['ionic','ionic.service.core', 'umb-hsa.controllers', 'umb-hsa.services','ngCordova','backand'])
+angular.module('umb-hsa', ['ionic','ionic.service.core', 'umb-hsa.controllers', 'umb-hsa.services','backand'])
 
 .run(function($ionicPlatform) {
 
@@ -15,24 +15,6 @@ angular.module('umb-hsa', ['ionic','ionic.service.core', 'umb-hsa.controllers', 
       StatusBar.styleDefault();
     }
   });
-
-//   $cordovaTouchID.checkSupport().then(function() {
-//     //2
-//     $cordovaTouchID.authenticate("Please authenticate with your fingerprint!").then(function() {
-//         // 3
-//         alert("You are a trusty mate! Come in and find out...")
-//     }, function (error) { // 4
-//         // Hopefully, there will be a better callback code in future releases
-//         if (error == "Fallback authentication mechanism selected.") {
-//             // User selected to enter a password 
-//         } else {
-//             alert("Sorry, we are not able to grant access.");
-//         }
-//     });
-// }, function (error) { // 5
-//     alert(error); // TouchID not supported
-// });
-
 })
 
 .config(function($compileProvider){
@@ -84,7 +66,7 @@ angular.module('umb-hsa', ['ionic','ionic.service.core', 'umb-hsa.controllers', 
       views: {
         'tab-usage': {
           templateUrl: 'templates/tab-usage.html',
-          controller: 'UsageCtrl'
+          // controller: 'UsageCtrl'
         }
       }
     })
